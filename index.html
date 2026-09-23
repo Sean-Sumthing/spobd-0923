@@ -1,4 +1,4 @@
-<!-- 썸띵 발주서 생성기 v1.4 (build 2026-09-18) -->
+<!-- 썸띵 발주서 생성기 v1.5 (build 2026-09-23) -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -80,6 +80,11 @@ button{cursor:pointer}
 .btn-ghost:hover{background:#f5f5f5}
 .btn-print{background:#111;color:#fff;border:none;padding:7px 16px;border-radius:4px;font-size:12px;font-weight:500}
 .btn-print:hover{background:#333}
+.toolbar .btn-print{display:inline-flex;align-items:center;gap:5px}
+.toolbar .btn-print svg{width:14px;height:14px;display:block;flex-shrink:0}
+.btn-warn{background:#fff;border:1px solid #d32f2f;color:#d32f2f;padding:6px 13px;border-radius:4px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.btn-warn svg{width:14px;height:14px;display:block;flex-shrink:0}
+.btn-warn:hover{background:#fdecec}
 .btn-icon{background:#fff;border:1px solid #bbb;color:#444;width:30px;height:30px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center}
 .btn-icon svg{width:17px;height:17px;display:block}
 .btn-icon:not(:disabled):hover{background:#f0f0f0;color:#111}
@@ -261,6 +266,12 @@ button{cursor:pointer}
 .help-legend .sw{width:18px;height:18px;border-radius:4px;border:1px solid #aaa;flex-shrink:0}
 .help-body ol,.help-body ul{margin:0;padding-left:20px}
 .help-body ol li,.help-body ul li{margin-bottom:5px}
+.pn-warn{background:#fdecec;border-left:3px solid #d32f2f;padding:12px 14px;border-radius:5px;line-height:1.7}
+.pn-warn p{margin:0 0 8px}
+.pn-warn p:last-child{margin-bottom:0}
+.pn-warn b{color:#c62828}
+.pn-skip{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#555;cursor:pointer}
+.pn-skip input{margin:0;cursor:pointer}
 
 /* ─────────── 서식 미니바 ─────────── */
 .fmt-bar{
@@ -326,7 +337,7 @@ body.preview-mode input[data-field="orderDate"]{display:none !important}
 
 <!-- TOOLBAR -->
 <div class="toolbar no-print">
-  <strong class="brand">썸띵 발주서 Builder<span class="ver">v1.4</span></strong>
+  <strong class="brand">썸띵 발주서 Builder<span class="ver">v1.5</span></strong>
   <button class="btn-ghost" onclick="openHelp()">사용법 안내</button>
   <div class="tb-spacer"></div>
   <div class="legend hidden">
@@ -341,7 +352,8 @@ body.preview-mode input[data-field="orderDate"]{display:none !important}
   </button>
   <button class="btn-ghost" onclick="resetDefaults()">기본값 복원</button>
   <button class="btn-ghost" id="btn-preview">미리보기</button>
-  <button class="btn-print" onclick="printDoc()">인쇄 / PDF 저장</button>
+  <button class="btn-warn" onclick="openPrintNotice(false)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="7.5" x2="12" y2="12.5"/><line x1="12" y1="16.5" x2="12.01" y2="16.5"/></svg>인쇄 시 유의사항 (필독)</button>
+  <button class="btn-print" onclick="printDoc()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg>인쇄 / PDF 저장</button>
 </div>
 
 <button class="preview-exit hidden" id="preview-exit" title="미리보기 종료 (Esc)">✕ 미리보기 종료</button>
@@ -539,6 +551,30 @@ body.preview-mode input[data-field="orderDate"]{display:none !important}
     <div class="modal-foot">
       <div class="tb-spacer"></div>
       <button class="btn-print" onclick="closeHelp()">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ───── 인쇄 시 유의사항 모달 (버튼으로 열람 / 인쇄 직전 자동 표시) ───── -->
+<div class="modal-overlay hidden no-print" id="print-notice-modal">
+  <div class="modal" style="width:500px">
+    <div class="modal-head">
+      <strong style="color:#c62828">인쇄 시 유의사항 (필독)</strong>
+      <button class="modal-x" onclick="closePrintNotice()" title="닫기">✕</button>
+    </div>
+    <div class="help-body">
+      <div class="pn-warn">
+        <p>출력 또는 PDF 저장하실 때, <b>머리글(헤더) 및 바닥글(푸터) 표시 옵션을 반드시 해제</b>하여 머리글과 바닥글이 보이지 않도록 출력 및 저장하여 사용해주세요.</p>
+        <p>특히, <b>바닥글의 링크가 공유되면 해당 링크를 통해 누구나 발주서 페이지에 접근</b>할 수 있으니, 정보 보안을 위해 반드시 유의해서 사용해주세요.</p>
+      </div>
+      <p class="help-sub">크롬 기준: 인쇄 창 → <b>설정 더보기</b> → <b>머리글과 바닥글</b> 체크 해제</p>
+    </div>
+    <div class="modal-foot">
+      <label class="pn-skip pn-print-only"><input type="checkbox" id="pn-skip-today"> 오늘 하루 보지 않기</label>
+      <div class="tb-spacer"></div>
+      <button class="btn-ghost pn-print-only" onclick="closePrintNotice()">취소</button>
+      <button class="btn-print pn-print-only" onclick="confirmPrintNotice()">확인했습니다, 인쇄하기</button>
+      <button class="btn-print pn-info-only" onclick="closePrintNotice()">확인</button>
     </div>
   </div>
 </div>
@@ -846,7 +882,7 @@ function addrModalBack(){
 }
 document.addEventListener('keydown',e=>{
   if(e.key!=='Escape') return;
-  setPreview(false); closeHelp();
+  setPreview(false); closeHelp(); closePrintNotice();
   if(!$('#addr-modal').classList.contains('hidden')) addrModalBack();
 });
 $('#addr-modal').addEventListener('mousedown',e=>{if(e.target.id==='addr-modal')addrModalBack();});
@@ -1216,7 +1252,27 @@ function buildPdfName(){
   const manager = _fnameSafe(cd.split("/")[0]);                                 // 발주 담당자명(이름 부분)
   return `발주서(썸띵)_${yymmdd}_프로젝트_${item}_${manager}`;
 }
-function printDoc(){ updatePrintDates(); document.title = buildPdfName(); window.print(); }
+function doPrint(){ updatePrintDates(); document.title = buildPdfName(); window.print(); }
+function printDoc(){ if(printNoticeHiddenToday()) doPrint(); else openPrintNotice(true); }
+
+/* ── 인쇄 시 유의사항: 인쇄 직전 표시, '오늘 하루 보지 않기'는 이 브라우저에만 저장 ── */
+const PN_KEY = 'po_print_notice_hide';
+function localDateStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function printNoticeHiddenToday(){ try{ return localStorage.getItem(PN_KEY) === localDateStr(); }catch(e){ return false; } }
+function openPrintNotice(forPrint){
+  const m = $('#print-notice-modal');
+  m.querySelectorAll('.pn-print-only').forEach(el=>el.classList.toggle('hidden', !forPrint));
+  m.querySelectorAll('.pn-info-only').forEach(el=>el.classList.toggle('hidden', forPrint));
+  $('#pn-skip-today').checked = false;
+  m.classList.remove('hidden');
+}
+function closePrintNotice(){ $('#print-notice-modal').classList.add('hidden'); }
+function confirmPrintNotice(){
+  if($('#pn-skip-today').checked){ try{ localStorage.setItem(PN_KEY, localDateStr()); }catch(e){} }
+  closePrintNotice();
+  setTimeout(doPrint, 50);
+}
+$('#print-notice-modal').addEventListener('mousedown',e=>{if(e.target.id==='print-notice-modal')closePrintNotice();});
 window.addEventListener('beforeprint', ()=>{ updatePrintDates(); document.title = buildPdfName(); });   // Ctrl+P 대응
 window.addEventListener('afterprint', ()=>{ document.title = ORIG_TITLE; });
 
